@@ -145,8 +145,14 @@ tasks.register("printVersion") {
 // Note: The org.scm-manager.license plugin doesn't provide Kotlin DSL accessors yet,
 // so we need to use reflection to configure it properly
 extensions.getByName("license").apply {
-    val setHeaderMethod = this.javaClass.getMethod("setHeader", File::class.java)
-    setHeaderMethod.invoke(this, project.rootProject.file("LICENSE-HEADER.txt"))
+    try {
+        val setHeaderMethod = this.javaClass.getMethod("setHeader", File::class.java)
+        setHeaderMethod.invoke(this, project.rootProject.file("LICENSE-HEADER.txt"))
+    } catch (e: NoSuchMethodException) {
+        throw GradleException("Unable to configure license plugin: setHeader method not found. The plugin API may have changed.", e)
+    } catch (e: Exception) {
+        throw GradleException("Unable to configure license plugin: ${e.message}", e)
+    }
 }
 
 fun setVersion(version: String) {
