@@ -4,6 +4,9 @@ import org.gradle.util.VersionNumber
 import java.util.Properties
 import java.io.File
 
+// Plugin name constant to avoid duplication
+val smpPluginName = "smpPlugin"
+
 plugins {
     // Apply the Java Gradle plugin development plugin to add support for developing Gradle plugins
     `java-gradle-plugin`
@@ -52,13 +55,13 @@ dependencies {
 }
 
 project.tasks.withType<GroovyCompile> {
-    sourceCompatibility = JavaVersion.VERSION_17.toString()
-    targetCompatibility = JavaVersion.VERSION_17.toString()
+    sourceCompatibility = "17"
+    targetCompatibility = "17"
 }
 
 project.tasks.withType<JavaCompile> {
-    sourceCompatibility = JavaVersion.VERSION_17.toString()
-    targetCompatibility = JavaVersion.VERSION_17.toString()
+    sourceCompatibility = "17"
+    targetCompatibility = "17"
 }
 
 tasks.test {
@@ -68,7 +71,7 @@ tasks.test {
 gradlePlugin {
     // Define the plugin
     plugins {
-        create("smpPlugin") {
+        create(smpPluginName) {
             id = "org.scm-manager.smp"
             implementationClass = "com.cloudogu.smp.GradleSmpPlugin"
         }
@@ -105,7 +108,7 @@ pluginBundle {
     tags = listOf("scm-manager", "smp", "plugin")
 
     plugins {
-        named("smpPlugin") {
+        named(smpPluginName) {
             displayName = "Gradle SCM-Manager Plugin"
         }
     }
@@ -138,6 +141,9 @@ tasks.register("printVersion") {
     }
 }
 
+// Configure the license extension using reflection
+// Note: The org.scm-manager.license plugin doesn't provide Kotlin DSL accessors yet,
+// so we need to use reflection to configure it properly
 extensions.getByName("license").apply {
     val setHeaderMethod = this.javaClass.getMethod("setHeader", File::class.java)
     setHeaderMethod.invoke(this, project.rootProject.file("LICENSE-HEADER.txt"))
