@@ -84,7 +84,7 @@ pluginBundle {
   tags = listOf("scm-manager", "smp", "plugin")
 
   plugins {
-    "smpPlugin" {
+    named("smpPlugin") {
       displayName = "Gradle SCM-Manager Plugin"
     }
   }
@@ -116,7 +116,7 @@ tasks.register("printVersion") {
 }
 
 license {
-  header = rootProject.file("LICENSE-HEADER.txt")
+  header.set(resources.text.fromFile(rootProject.file("LICENSE-HEADER.txt")))
 }
 
 fun setVersion(version: String) {
